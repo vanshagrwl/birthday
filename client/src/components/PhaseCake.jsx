@@ -25,8 +25,8 @@ export function PhaseCake({ onDone }) {
   const firmHoldMs = isCoarsePointer ? 950 : FIRM_HOLD_MS;
   const moveCancelPx = isCoarsePointer ? 34 : MOVE_CANCEL_PX;
   const cutPathPx = isCoarsePointer ? 58 : CUT_PATH_PX;
-  const blowThreshold = isCoarsePointer ? 0.22 : BLOW_THRESHOLD;
-  const blowSustainMs = isCoarsePointer ? 220 : BLOW_SUSTAIN_MS;
+  const blowThreshold = isCoarsePointer ? 0.14 : BLOW_THRESHOLD;
+  const blowSustainMs = isCoarsePointer ? 120 : BLOW_SUSTAIN_MS;
   /* Don’t reference blownMic in `enabled` — it’s returned by this hook (TDZ crash). */
   const { ready, error, blown: blownMic, level } = useBlowDetector({
     enabled: !blownScreen,
