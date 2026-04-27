@@ -7,8 +7,8 @@ const CANDLE_X = [28, 40, 50, 60, 72];
 const FIRM_HOLD_MS = 1450;
 const MOVE_CANCEL_PX = 26;
 const CUT_PATH_PX = 88;
-const BLOW_THRESHOLD = 0.29;
-const BLOW_SUSTAIN_MS = 300;
+const BLOW_THRESHOLD = 0.23;
+const BLOW_SUSTAIN_MS = 180;
 
 function bladeTipFromKnifeEl(el) {
   if (!el) return null;
@@ -25,15 +25,14 @@ export function PhaseCake({ onDone }) {
   const firmHoldMs = isCoarsePointer ? 950 : FIRM_HOLD_MS;
   const moveCancelPx = isCoarsePointer ? 34 : MOVE_CANCEL_PX;
   const cutPathPx = isCoarsePointer ? 58 : CUT_PATH_PX;
-  const blowThreshold = isCoarsePointer ? 0.09 : BLOW_THRESHOLD;
-  const blowSustainMs = isCoarsePointer ? 70 : BLOW_SUSTAIN_MS;
+  const blowThreshold = isCoarsePointer ? 0.14 : BLOW_THRESHOLD;
+  const blowSustainMs = isCoarsePointer ? 120 : BLOW_SUSTAIN_MS;
   /* Don’t reference blownMic in `enabled` — it’s returned by this hook (TDZ crash). */
   const { ready, error, blown: blownMic, level } = useBlowDetector({
     enabled: !blownScreen,
     threshold: blowThreshold,
     sustainMs: blowSustainMs,
     cooldownMs: 850,
-    mobileTuned: isCoarsePointer,
   });
   const firmRef = useRef(null);
   const firmOrigin = useRef(null);
@@ -290,15 +289,13 @@ export function PhaseCake({ onDone }) {
       if (error) {
         return "Mic unavailable — press & hold firmly on the pink ring below (or use a stylus with pressure).";
       }
-      if (!ready) return "Allow microphone, then gently blow or speak toward the phone mic — watch the meter.";
-      return isCoarsePointer
-        ? "On phone, a normal blow/voice should fill the meter. You can also use firm-press."
-        : "Blow hard enough to fill the meter — or firm-press the ring / stylus pressure.";
+      if (!ready) return "Allow the microphone, then blow sharply at the device — watch the meter.";
+      return "Blow hard enough to fill the meter — or firm-press the ring / stylus pressure.";
     }
     if (!showKnife) return "Little wisps of smoke…";
     if (!sliced) return "Click & drag the knife across the cake (finger on mobile).";
     return "Serving the next chapter…";
-  }, [candlesOut, error, ready, showKnife, sliced, isCoarsePointer]);
+  }, [candlesOut, error, ready, showKnife, sliced]);
 
   const meterPct = Math.min(100, Math.round((level ?? 0) * 100));
 
