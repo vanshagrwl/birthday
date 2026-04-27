@@ -10,6 +10,7 @@ export function useBlowDetector({
   threshold = 0.28,
   sustainMs = 280,
   cooldownMs = 900,
+  mobileTuned = false,
 } = {}) {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(null);
@@ -21,11 +22,13 @@ export function useBlowDetector({
   const loudSinceRef = useRef(null);
   const lastTriggerRef = useRef(0);
   const mediaRecorderRef = useRef(null);
+  const ambientRef = useRef(0);
 
   const stop = useCallback(() => {
     cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
     loudSinceRef.current = null;
+    ambientRef.current = 0;
     if (mediaRecorderRef.current) {
       try {
         if (mediaRecorderRef.current.state !== "inactive") {
@@ -69,8 +72,8 @@ export function useBlowDetector({
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: true,
-            noiseSuppression: false,
-            autoGainControl: false,
+            noiseSuppression: true,
+            autoGainControl: true,
           },
           video: false,
         });
@@ -121,11 +124,18 @@ export function useBlowDetector({
           const normTime = Math.sqrt(dev / time.length);
 
           const norm = Math.max(normFreq, normTime);
-          const display = Math.min(1, norm / Math.max(threshold * 1.15, 0.08));
+          if (ambientRef.current === 0) {
+            ambientRef.current = norm;
+          } else {
+            ambientRef.current = ambientRef.current * 0.92 + norm * 0.08;
+          }
+          const adjusted = Math.max(0, norm - ambientRef.current * 0.55);
+          const effectiveThreshold = mobileTuned ? threshold * 0.78 : threshold;
+          const display = Math.min(1, adjusted / Math.max(effectiveThreshold * 0.95, 0.045));
           setLevel(display);
 
           const now = performance.now();
-          if (norm > threshold) {
+          if (adjusted > effectiveThreshold) {
             if (loudSinceRef.current == null) loudSinceRef.current = now;
             if (now - loudSinceRef.current >= sustainMs && now - lastTriggerRef.current > cooldownMs) {
               lastTriggerRef.current = now;
@@ -151,7 +161,7 @@ export function useBlowDetector({
       cancelled = true;
       stop();
     };
-  }, [enabled, blown, stop, threshold, sustainMs, cooldownMs]);
+  }, [enabled, blown, stop, threshold, sustainMs, cooldownMs, mobileTuned]);
 
   return { ready, error, blown, stop, level };
 }
