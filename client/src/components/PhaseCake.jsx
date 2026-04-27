@@ -17,12 +17,21 @@ function bladeTipFromKnifeEl(el) {
 }
 
 export function PhaseCake({ onDone }) {
+  const isCoarsePointer = useMemo(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return false;
+    return window.matchMedia("(pointer: coarse)").matches;
+  }, []);
   const [blownScreen, setBlownScreen] = useState(false);
+  const firmHoldMs = isCoarsePointer ? 950 : FIRM_HOLD_MS;
+  const moveCancelPx = isCoarsePointer ? 34 : MOVE_CANCEL_PX;
+  const cutPathPx = isCoarsePointer ? 58 : CUT_PATH_PX;
+  const blowThreshold = isCoarsePointer ? 0.22 : BLOW_THRESHOLD;
+  const blowSustainMs = isCoarsePointer ? 220 : BLOW_SUSTAIN_MS;
   /* Don’t reference blownMic in `enabled` — it’s returned by this hook (TDZ crash). */
   const { ready, error, blown: blownMic, level } = useBlowDetector({
     enabled: !blownScreen,
-    threshold: BLOW_THRESHOLD,
-    sustainMs: BLOW_SUSTAIN_MS,
+    threshold: blowThreshold,
+    sustainMs: blowSustainMs,
     cooldownMs: 850,
   });
   const firmRef = useRef(null);
@@ -83,7 +92,7 @@ export function PhaseCake({ onDone }) {
       firmTimerRef.current = window.setTimeout(() => {
         firmTimerRef.current = null;
         if (pointerDownRef.current) setBlownScreen(true);
-      }, FIRM_HOLD_MS);
+      }, firmHoldMs);
       try {
         e.currentTarget.setPointerCapture(e.pointerId);
       } catch {
@@ -97,7 +106,7 @@ export function PhaseCake({ onDone }) {
     (e) => {
       if (!firmOrigin.current || candlesOut) return;
       const d = Math.hypot(e.clientX - firmOrigin.current.x, e.clientY - firmOrigin.current.y);
-      if (d > MOVE_CANCEL_PX) {
+      if (d > moveCancelPx) {
         if (firmTimerRef.current != null) {
           window.clearTimeout(firmTimerRef.current);
           firmTimerRef.current = null;
@@ -116,7 +125,7 @@ export function PhaseCake({ onDone }) {
         pressureHighSince.current = null;
       }
     },
-    [candlesOut, endFirmTracking]
+    [candlesOut, endFirmTracking, moveCancelPx]
   );
 
   const onFirmPointerUp = useCallback(() => {
@@ -125,7 +134,7 @@ export function PhaseCake({ onDone }) {
 
   const tryRegisterCut = useCallback(() => {
     if (!showKnife || sliced) return;
-    if (pathInCakeRef.current >= CUT_PATH_PX) {
+    if (pathInCakeRef.current >= cutPathPx) {
       setSliced(true);
       setFade(true);
       
@@ -141,7 +150,7 @@ export function PhaseCake({ onDone }) {
       // Proceed to next phase
       window.setTimeout(() => onDone(), 1700);
     }
-  }, [showKnife, sliced, onDone]);
+  }, [showKnife, sliced, onDone, cutPathPx]);
 
   const updateKnifePath = useCallback(() => {
     const tip = bladeTipFromKnifeEl(knifeRef.current);
@@ -251,6 +260,20 @@ export function PhaseCake({ onDone }) {
     },
     [tryRegisterCut]
   );
+
+  useEffect(() => {
+    if (!knifeDragging) return undefined;
+    const onWindowMove = (e) => onKnifePointerMove(e);
+    const onWindowUp = (e) => onKnifePointerUp(e);
+    window.addEventListener("pointermove", onWindowMove, { passive: false });
+    window.addEventListener("pointerup", onWindowUp);
+    window.addEventListener("pointercancel", onWindowUp);
+    return () => {
+      window.removeEventListener("pointermove", onWindowMove);
+      window.removeEventListener("pointerup", onWindowUp);
+      window.removeEventListener("pointercancel", onWindowUp);
+    };
+  }, [knifeDragging, onKnifePointerMove, onKnifePointerUp]);
 
   const candleClass = candlesOut ? "candle candle--out" : "candle";
 

@@ -488,6 +488,7 @@ body {
   min-height: 260px;
   overflow: visible;
   z-index: 1;
+  touch-action: none;
 }
 
 .cake-body {
@@ -645,8 +646,8 @@ body {
   position: absolute;
   right: 6%;
   bottom: 40%;
-  width: 120px;
-  height: 48px;
+  width: 132px;
+  height: 56px;
   padding: 0;
   border: none;
   background: transparent;
@@ -659,7 +660,9 @@ body {
     transform 0.55s var(--ease-out),
     filter 0.2s ease;
   z-index: 8;
-  touch-action: manipulation;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .cake-knife-btn--show {
@@ -2052,7 +2055,7 @@ body {
   top: 0;
   height: 100vh;
   height: 100dvh;
-  width: 50%;
+  width: 52%;
   z-index: 6;
   pointer-events: none;
   background:
@@ -2063,12 +2066,12 @@ body {
 
 .luxe-curtain--left {
   left: 0;
-  border-radius: 24px 0 0 24px;
+  border-radius: 0;
 }
 
 .luxe-curtain--right {
   right: 0;
-  border-radius: 0 24px 24px 0;
+  border-radius: 0;
   box-shadow: inset 8px 0 16px rgba(0, 0, 0, 0.3);
 }
 
@@ -2843,6 +2846,124 @@ body {
   }
   .luxe-quiz-footer {
     flex-direction: column;
+  }
+
+  .cake-scene {
+    min-height: min(280px, 54vh);
+    padding: 10px 6px 6px;
+  }
+
+  .cake-wrap {
+    min-height: 220px;
+    height: min(250px, 58vw);
+  }
+
+  .cake-body {
+    width: min(220px, 62vw);
+    height: min(110px, 31vw);
+    bottom: 12px;
+  }
+
+  .cake-frost-top {
+    bottom: min(118px, 33vw);
+    width: min(86%, 230px);
+    height: 42px;
+  }
+
+  .candle {
+    bottom: min(152px, 43vw);
+    height: 42px;
+  }
+
+  .cake-knife-btn {
+    width: 122px;
+    height: 54px;
+  }
+
+  .cake-knife-btn__blade {
+    width: 72px;
+  }
+
+  .cake-scene-hint {
+    font-size: clamp(14px, 3.6vw, 16px);
+    line-height: 1.42;
+  }
+
+  .luxe-stage-scroll {
+    width: min(640px, calc(100vw - 36px));
+  }
+
+  .luxe-stage-scroll__panda {
+    width: 102px;
+    height: 66px;
+    top: -46px;
+  }
+
+  .luxe-hanging-photo--top-left {
+    left: 10px;
+    top: 48px;
+  }
+
+  .luxe-hanging-photo--bottom-right {
+    right: 8px;
+    top: 62%;
+  }
+
+  .luxe-hanging-photo {
+    width: clamp(92px, 23vw, 128px);
+  }
+}
+
+@media (max-width: 480px) {
+  .cake-scene-panel {
+    padding: 14px !important;
+  }
+
+  .cake-scene {
+    min-height: min(250px, 50vh);
+  }
+
+  .cake-wrap {
+    height: min(230px, 64vw);
+    min-height: 200px;
+  }
+
+  .cake-body {
+    width: min(198px, 64vw);
+    height: min(102px, 33vw);
+  }
+
+  .cake-frost-top {
+    width: min(90%, 210px);
+    height: 38px;
+  }
+
+  .candle {
+    width: 10px;
+    bottom: min(145px, 46vw);
+  }
+
+  .candle-flame {
+    width: 18px;
+    height: 26px;
+  }
+
+  .cake-firm-ring {
+    min-height: 52px;
+    padding: 12px 16px;
+  }
+
+  .cake-firm-ring__label {
+    font-size: 14px;
+  }
+
+  .luxe-wish-title {
+    font-size: clamp(38px, 11vw, 58px);
+  }
+
+  .luxe-wish-text {
+    font-size: clamp(28px, 8vw, 40px);
+    line-height: 1.08;
   }
 }
 

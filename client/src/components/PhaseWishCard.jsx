@@ -136,8 +136,8 @@ export function PhaseWishCard({ onContinue, onMountStartMusic }) {
           </div>
         </motion.div>
 
-        <motion.div className="luxe-curtain luxe-curtain--left" initial={{ x: "0%" }} animate={{ x: revealed ? "-66%" : "0%" }} transition={{ duration: 3, ease: "easeInOut" }} />
-        <motion.div className="luxe-curtain luxe-curtain--right" initial={{ x: "0%" }} animate={{ x: revealed ? "66%" : "0%" }} transition={{ duration: 3, ease: "easeInOut" }} />
+        <motion.div className="luxe-curtain luxe-curtain--left" initial={{ x: "0%" }} animate={{ x: revealed ? "-102%" : "0%" }} transition={{ duration: 3, ease: "easeInOut" }} />
+        <motion.div className="luxe-curtain luxe-curtain--right" initial={{ x: "0%" }} animate={{ x: revealed ? "102%" : "0%" }} transition={{ duration: 3, ease: "easeInOut" }} />
       </motion.div>
     </motion.div>
   );
