@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 2,
   "builds": [
     {
       "src": "package.json",
@@ -8,8 +8,5 @@
         "distDir": "client/dist"
       }
     }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/client/dist/$1" }
   ]
 }
