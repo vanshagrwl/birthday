@@ -1,6 +1,9 @@
 {
   "name": "birthday-special",
   "private": true,
+  "dependencies": {
+    "resend": "^4.0.1"
+  },
   "scripts": {
     "install:all": "npm install && cd server && npm install && cd ../client && npm install",
     "server": "cd server && node index.js",
